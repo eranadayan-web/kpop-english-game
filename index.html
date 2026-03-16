@@ -1,0 +1,1556 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>KPop Demon Hunters 🌸 - אנגלית עם רומי</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;900&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0d0021;
+      --bg2: #1a0040;
+      --purple: #6b21a8;
+      --pink: #ff2d9e;
+      --cyan: #00f5d4;
+      --gold: #ffd700;
+      --white: #f0e6ff;
+      --card: #1e0050;
+      --card2: #2a0070;
+      --danger: #ff4444;
+      --green: #00e676;
+      --shadow-pink: 0 0 20px rgba(255,45,158,0.5);
+      --shadow-cyan: 0 0 20px rgba(0,245,212,0.5);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--white);
+      font-family: 'Rubik', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      direction: rtl;
+    }
+    #app { min-height: 100vh; position: relative; }
+
+    /* PARTICLES */
+    .particle { position: fixed; pointer-events: none; font-size: 16px; animation: float-up 4s linear infinite; opacity: 0; z-index: 0; }
+    @keyframes float-up { 0%{transform:translateY(110vh) rotate(0deg);opacity:0} 10%{opacity:0.7} 90%{opacity:0.4} 100%{transform:translateY(-10vh) rotate(360deg);opacity:0} }
+
+    /* SCREENS */
+    .screen { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; position: relative; z-index: 1; }
+
+    /* WELCOME SCREEN */
+    .welcome-bg { background: radial-gradient(ellipse at 50% 0%, #3d0080 0%, #1a0040 40%, #0d0021 100%); }
+    .game-logo { text-align: center; margin-bottom: 20px; }
+    .game-logo .title-en {
+      font-family: 'Orbitron', monospace;
+      font-size: clamp(22px, 5vw, 42px);
+      background: linear-gradient(90deg, var(--pink), var(--cyan), var(--gold));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      text-shadow: none; letter-spacing: 2px;
+      filter: drop-shadow(0 0 15px var(--pink));
+    }
+    .game-logo .title-he { font-size: clamp(16px, 3.5vw, 26px); color: var(--cyan); margin-top: 5px; font-weight: 700; }
+    .romi-container { position: relative; display: flex; flex-direction: column; align-items: center; margin: 15px 0; }
+    .romi-svg { width: 160px; height: 220px; filter: drop-shadow(0 0 20px var(--pink)); animation: romi-float 3s ease-in-out infinite; }
+    @keyframes romi-float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+    .romi-name { font-size: 22px; font-weight: 900; color: var(--gold); text-shadow: 0 0 15px var(--gold); margin-top: 5px; }
+    .romi-tagline { font-size: 14px; color: var(--cyan); opacity: 0.8; margin-top: 3px; }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--pink), #a020f0);
+      border: none; border-radius: 50px; color: white; font-family: 'Rubik', sans-serif;
+      font-size: 20px; font-weight: 700; padding: 15px 50px; cursor: pointer;
+      box-shadow: var(--shadow-pink); transition: all 0.2s; margin: 8px;
+      display: inline-flex; align-items: center; gap: 8px;
+    }
+    .btn-primary:hover { transform: scale(1.06); box-shadow: 0 0 35px rgba(255,45,158,0.7); }
+    .btn-primary:active { transform: scale(0.97); }
+    .btn-secondary {
+      background: transparent; border: 2px solid var(--cyan); border-radius: 50px;
+      color: var(--cyan); font-family: 'Rubik', sans-serif; font-size: 16px; font-weight: 600;
+      padding: 10px 30px; cursor: pointer; transition: all 0.2s; margin: 8px;
+    }
+    .btn-secondary:hover { background: rgba(0,245,212,0.1); box-shadow: var(--shadow-cyan); }
+    .stats-bar { display: flex; gap: 20px; align-items: center; justify-content: center; margin-top: 10px; }
+    .stat-item { display: flex; align-items: center; gap: 6px; font-size: 14px; color: var(--gold); }
+
+    /* LEVEL SELECT */
+    .level-screen { background: radial-gradient(ellipse at 30% 50%, #1a004a 0%, #0d0021 70%); }
+    .screen-title { font-size: clamp(20px, 4vw, 32px); font-weight: 900; text-align: center; margin-bottom: 25px; }
+    .screen-title span { background: linear-gradient(90deg, var(--pink), var(--cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .grades-grid { display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; width: 100%; max-width: 900px; }
+    .grade-card {
+      background: linear-gradient(135deg, var(--card), var(--card2));
+      border: 2px solid transparent; border-radius: 20px; padding: 25px 20px;
+      width: clamp(200px, 28vw, 260px); text-align: center; cursor: pointer;
+      transition: all 0.3s; position: relative; overflow: hidden;
+    }
+    .grade-card::before { content:''; position:absolute; inset:0; border-radius:20px; padding:2px; background: linear-gradient(135deg, var(--pink), var(--purple), var(--cyan)); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; }
+    .grade-card:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 15px 40px rgba(107,33,168,0.5); }
+    .grade-card .grade-emoji { font-size: 48px; margin-bottom: 10px; display: block; }
+    .grade-card .grade-num { font-family: 'Orbitron', monospace; font-size: 28px; font-weight: 900; color: var(--gold); }
+    .grade-card .grade-he { font-size: 16px; color: var(--cyan); margin: 5px 0; }
+    .grade-card .grade-desc { font-size: 12px; color: rgba(240,230,255,0.6); }
+    .diff-selector { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 20px; width: 100%; }
+    .diff-btn {
+      padding: 12px 28px; border-radius: 50px; border: 2px solid; font-family: 'Rubik', sans-serif;
+      font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.2s;
+    }
+    .diff-easy { border-color: var(--green); color: var(--green); background: rgba(0,230,118,0.1); }
+    .diff-easy:hover { background: rgba(0,230,118,0.25); box-shadow: 0 0 20px rgba(0,230,118,0.4); }
+    .diff-medium { border-color: var(--gold); color: var(--gold); background: rgba(255,215,0,0.1); }
+    .diff-medium:hover { background: rgba(255,215,0,0.25); box-shadow: 0 0 20px rgba(255,215,0,0.4); }
+    .diff-hard { border-color: var(--pink); color: var(--pink); background: rgba(255,45,158,0.1); }
+    .diff-hard:hover { background: rgba(255,45,158,0.25); box-shadow: var(--shadow-pink); }
+
+    /* GAME HUB */
+    .hub-header { display:flex; align-items:center; gap:15px; margin-bottom:25px; width:100%; max-width:800px; }
+    .level-badge { background: linear-gradient(135deg, var(--purple), var(--pink)); border-radius: 15px; padding: 10px 20px; font-size: 14px; font-weight: 700; text-align: center; }
+    .progress-bar-wrap { flex:1; }
+    .progress-bar-bg { background: rgba(255,255,255,0.1); border-radius:50px; height:12px; overflow:hidden; }
+    .progress-bar-fill { background: linear-gradient(90deg, var(--cyan), var(--pink)); height:100%; border-radius:50px; transition:width 0.5s; }
+    .games-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; width: 100%; max-width: 800px; }
+    .game-card {
+      background: linear-gradient(135deg, var(--card), var(--card2));
+      border-radius: 20px; padding: 25px 20px; text-align: center; cursor: pointer;
+      transition: all 0.3s; position: relative; overflow: hidden; border: 2px solid rgba(255,255,255,0.08);
+    }
+    .game-card:hover { transform: translateY(-6px); border-color: var(--pink); box-shadow: var(--shadow-pink); }
+    .game-card .game-icon { font-size: 44px; display: block; margin-bottom: 10px; }
+    .game-card .game-name { font-size: 17px; font-weight: 700; color: var(--white); margin-bottom: 4px; }
+    .game-card .game-name-he { font-size: 13px; color: var(--cyan); margin-bottom: 8px; }
+    .game-card .game-desc { font-size: 12px; color: rgba(240,230,255,0.6); }
+    .stars-row { display:flex; justify-content:center; gap:4px; margin-top:10px; }
+    .star { font-size:18px; opacity:0.3; }
+    .star.earned { opacity:1; animation: star-pop 0.3s ease; }
+    @keyframes star-pop { 0%{transform:scale(0)} 60%{transform:scale(1.4)} 100%{transform:scale(1)} }
+
+    /* GAME SCREEN */
+    .game-header {
+      display: flex; align-items: center; gap: 12px; width: 100%; max-width: 750px;
+      padding: 12px 16px; background: rgba(255,255,255,0.05); border-radius: 15px; margin-bottom: 20px;
+    }
+    .lives { display:flex; gap:4px; }
+    .heart { font-size:22px; transition:all 0.3s; }
+    .heart.lost { opacity:0.2; filter:grayscale(1); }
+    .score-display { flex:1; text-align:center; font-size:18px; font-weight:700; color:var(--gold); }
+    .hint-btn { background: rgba(255,215,0,0.15); border: 2px solid var(--gold); border-radius:10px; color:var(--gold); font-family:'Rubik',sans-serif; font-size:13px; font-weight:700; padding:6px 14px; cursor:pointer; transition:all 0.2s; }
+    .hint-btn:hover { background:rgba(255,215,0,0.3); }
+    .question-counter { font-size:13px; color:rgba(240,230,255,0.6); white-space:nowrap; }
+    .game-area { width:100%; max-width:750px; }
+
+    /* LETTER QUEST */
+    .lq-word-display { display:flex; justify-content:center; align-items:center; gap:12px; margin:25px 0; flex-wrap:wrap; }
+    .lq-letter {
+      width: 58px; height: 70px; background: linear-gradient(135deg, var(--card), var(--card2));
+      border: 3px solid var(--purple); border-radius: 12px; display:flex; align-items:center;
+      justify-content:center; font-size: 36px; font-weight: 900; font-family:'Orbitron',monospace;
+      color: var(--white); transition: all 0.3s; text-transform: uppercase;
+    }
+    .lq-letter.blank { border-color: var(--pink); border-style: dashed; color: transparent; }
+    .lq-letter.filled { border-color: var(--cyan); color: var(--cyan); box-shadow: var(--shadow-cyan); animation: pop 0.3s ease; }
+    @keyframes pop { 0%{transform:scale(0.7)} 60%{transform:scale(1.2)} 100%{transform:scale(1)} }
+    .lq-letter.correct { border-color: var(--green); color: var(--green); box-shadow: 0 0 20px rgba(0,230,118,0.5); }
+    .lq-letter.wrong { border-color: var(--danger); color: var(--danger); animation: shake 0.4s ease; }
+    @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+    .lq-image { font-size: 80px; text-align:center; margin-bottom:15px; filter:drop-shadow(0 0 10px rgba(255,45,158,0.4)); }
+    .lq-hint-text { text-align:center; color:var(--gold); font-size:15px; background:rgba(255,215,0,0.1); border-radius:10px; padding:10px 20px; margin-bottom:15px; }
+    .lq-letters-pool { display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-top:20px; }
+    .lq-pool-letter {
+      width: 52px; height: 60px; background: linear-gradient(135deg, #3d0080, #6b21a8);
+      border: 2px solid var(--purple); border-radius: 10px; cursor:pointer;
+      font-size: 28px; font-weight: 900; font-family:'Orbitron',monospace;
+      color: var(--white); display:flex; align-items:center; justify-content:center;
+      transition: all 0.2s; text-transform: uppercase;
+    }
+    .lq-pool-letter:hover { transform:scale(1.1); border-color:var(--cyan); box-shadow:var(--shadow-cyan); }
+    .lq-pool-letter:active { transform:scale(0.95); }
+    .lq-pool-letter.used { opacity:0.2; pointer-events:none; }
+    .lq-actions { display:flex; gap:10px; justify-content:center; margin-top:15px; }
+    .btn-check { background:linear-gradient(135deg,var(--cyan),#00a896); border:none; border-radius:50px; color:#0d0021; font-family:'Rubik',sans-serif; font-size:17px; font-weight:900; padding:13px 40px; cursor:pointer; transition:all 0.2s; }
+    .btn-check:hover { transform:scale(1.05); box-shadow:var(--shadow-cyan); }
+    .btn-clear { background:transparent; border:2px solid rgba(255,255,255,0.2); border-radius:50px; color:rgba(240,230,255,0.6); font-family:'Rubik',sans-serif; font-size:14px; padding:10px 25px; cursor:pointer; transition:all 0.2s; }
+    .btn-clear:hover { border-color:var(--pink); color:var(--pink); }
+
+    /* SENTENCE DUEL */
+    .sd-sentence {
+      background: linear-gradient(135deg, var(--card), var(--card2)); border-radius:20px;
+      padding:25px 30px; font-size:clamp(18px,3vw,24px); font-weight:500; line-height:1.6;
+      text-align:center; margin-bottom:25px; border:1px solid rgba(255,255,255,0.1);
+      direction: ltr; font-family:'Rubik',sans-serif;
+    }
+    .sd-blank { display:inline-block; min-width:100px; border-bottom:3px solid var(--pink); color:var(--pink); font-weight:700; padding:0 10px; }
+    .sd-options { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .sd-option {
+      background: linear-gradient(135deg, var(--card), var(--card2)); border: 2px solid rgba(255,255,255,0.15);
+      border-radius:15px; padding:16px; font-family:'Rubik',sans-serif; font-size:18px; font-weight:700;
+      color:var(--white); cursor:pointer; transition:all 0.2s; text-align:center; direction:ltr;
+    }
+    .sd-option:hover { border-color:var(--cyan); box-shadow:var(--shadow-cyan); transform:scale(1.02); }
+    .sd-option.correct { border-color:var(--green); background:rgba(0,230,118,0.2); animation:pop 0.3s ease; }
+    .sd-option.wrong { border-color:var(--danger); background:rgba(255,68,68,0.2); animation:shake 0.4s ease; }
+    .sd-option.disabled { pointer-events:none; opacity:0.5; }
+    .sd-hint-box { background:rgba(255,215,0,0.1); border:1px solid var(--gold); border-radius:12px; padding:15px 20px; margin-bottom:20px; font-size:14px; color:var(--gold); text-align:center; }
+    .sd-next-btn { display:none; margin:20px auto; }
+    .sd-battle { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
+    .sd-char { text-align:center; font-size:60px; }
+    .sd-vs { font-family:'Orbitron',monospace; font-size:24px; color:var(--pink); font-weight:900; }
+    .hp-bar-wrap { width:120px; }
+    .hp-bar-bg { background:rgba(255,255,255,0.1); border-radius:50px; height:10px; margin-top:5px; overflow:hidden; }
+    .hp-bar-fill { height:100%; border-radius:50px; transition:width 0.5s; }
+    .hp-romi { background:linear-gradient(90deg,var(--cyan),#00a8a8); }
+    .hp-demon { background:linear-gradient(90deg,var(--danger),#990000); }
+
+    /* WORD HUNT */
+    .wh-grid { display:inline-grid; gap:2px; background:var(--card2); border:2px solid var(--purple); border-radius:15px; padding:10px; user-select:none; margin:0 auto; display:block; width:fit-content; }
+    .wh-row { display:flex; gap:2px; }
+    .wh-cell {
+      width: 38px; height: 38px; background:var(--card); border-radius:6px; display:flex;
+      align-items:center; justify-content:center; font-family:'Orbitron',monospace;
+      font-size:16px; font-weight:700; cursor:pointer; transition:all 0.15s; color:var(--white);
+      border:1px solid rgba(255,255,255,0.05);
+    }
+    .wh-cell:hover { background:rgba(107,33,168,0.5); }
+    .wh-cell.selected { background:rgba(0,245,212,0.3); border-color:var(--cyan); color:var(--cyan); }
+    .wh-cell.found { background:linear-gradient(135deg,rgba(0,230,118,0.3),rgba(0,245,212,0.2)); border-color:var(--green); color:var(--green); }
+    .wh-words-list { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-top:15px; }
+    .wh-word-chip {
+      background:rgba(107,33,168,0.3); border:1px solid var(--purple); border-radius:20px;
+      padding:6px 16px; font-size:14px; font-weight:700; color:var(--white); direction:ltr;
+    }
+    .wh-word-chip.found { background:rgba(0,230,118,0.2); border-color:var(--green); color:var(--green); text-decoration:line-through; }
+    .wh-translation { font-size:11px; color:rgba(240,230,255,0.5); display:block; }
+    .wh-wrap { display:flex; gap:20px; align-items:flex-start; justify-content:center; flex-wrap:wrap; }
+
+    /* PICTURE MATCH */
+    .pm-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:20px; }
+    .pm-image-card {
+      background: var(--card); border: 3px solid rgba(255,255,255,0.1); border-radius:16px;
+      padding:20px 15px; text-align:center; cursor:pointer; transition:all 0.2s; position:relative;
+    }
+    .pm-image-card:hover { border-color:var(--pink); box-shadow:var(--shadow-pink); }
+    .pm-image-card.selected { border-color:var(--cyan); box-shadow:var(--shadow-cyan); }
+    .pm-image-card.matched { border-color:var(--green); background:rgba(0,230,118,0.1); pointer-events:none; }
+    .pm-image-card.wrong { border-color:var(--danger); animation:shake 0.4s ease; }
+    .pm-emoji { font-size:48px; display:block; margin-bottom:8px; }
+    .pm-label { font-size:12px; color:rgba(240,230,255,0.5); }
+    .pm-words { display:flex; flex-wrap:wrap; gap:10px; justify-content:center; }
+    .pm-word-btn {
+      background:linear-gradient(135deg,var(--card),var(--card2)); border:2px solid var(--purple);
+      border-radius:12px; padding:12px 24px; font-family:'Rubik',sans-serif; font-size:16px;
+      font-weight:700; color:var(--white); cursor:pointer; transition:all 0.2s; direction:ltr;
+    }
+    .pm-word-btn:hover { border-color:var(--pink); box-shadow:var(--shadow-pink); }
+    .pm-word-btn.selected { border-color:var(--cyan); color:var(--cyan); }
+    .pm-word-btn.used { opacity:0.2; pointer-events:none; }
+    .pm-instructions { text-align:center; font-size:14px; color:rgba(240,230,255,0.6); margin-bottom:15px; }
+
+    /* RESULTS */
+    .results-screen { background: radial-gradient(ellipse at 50% 30%, #3d006a 0%, #0d0021 70%); text-align:center; }
+    .results-stars { display:flex; justify-content:center; gap:10px; margin:20px 0; }
+    .results-star { font-size:52px; opacity:0.2; transform:scale(0); transition:all 0.4s; }
+    .results-star.earned { opacity:1; transform:scale(1); filter:drop-shadow(0 0 10px gold); }
+    .results-score { font-size:48px; font-weight:900; color:var(--gold); }
+    .results-score span { font-size:24px; color:rgba(240,230,255,0.6); }
+    .results-message { font-size:20px; color:var(--cyan); margin:10px 0 25px; }
+    .results-btns { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+    .achievement-popup {
+      position:fixed; bottom:30px; left:50%; transform:translateX(-50%) translateY(100px);
+      background:linear-gradient(135deg,var(--purple),#3d0080); border:2px solid var(--gold);
+      border-radius:15px; padding:15px 25px; text-align:center; font-size:14px; font-weight:700;
+      color:var(--gold); z-index:100; transition:transform 0.5s; box-shadow:0 0 25px rgba(255,215,0,0.3);
+    }
+    .achievement-popup.show { transform:translateX(-50%) translateY(0); }
+
+    /* HINT OVERLAY */
+    .hint-overlay {
+      position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:200; display:flex;
+      align-items:center; justify-content:center; padding:20px;
+    }
+    .hint-box {
+      background:linear-gradient(135deg,var(--card),var(--card2)); border:2px solid var(--gold);
+      border-radius:20px; padding:30px; max-width:400px; width:100%; text-align:center;
+    }
+    .hint-box h3 { color:var(--gold); font-size:20px; margin-bottom:15px; }
+    .hint-box p { color:var(--white); font-size:16px; line-height:1.6; margin-bottom:20px; }
+    .hint-box .hint-example { background:rgba(0,245,212,0.1); border:1px solid var(--cyan); border-radius:10px; padding:10px; margin-bottom:15px; font-size:14px; color:var(--cyan); direction:ltr; }
+
+    /* BACK BTN */
+    .back-btn { position:fixed; top:15px; right:15px; background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15); border-radius:12px; color:var(--white); font-family:'Rubik',sans-serif; font-size:13px; padding:8px 16px; cursor:pointer; z-index:50; transition:all 0.2s; }
+    .back-btn:hover { background:rgba(255,255,255,0.15); }
+    .feedback-overlay { position:fixed; inset:0; z-index:150; pointer-events:none; display:flex; align-items:center; justify-content:center; }
+    .feedback-msg { font-size:56px; animation:feedback-pop 0.8s ease forwards; opacity:0; }
+    @keyframes feedback-pop { 0%{opacity:0;transform:scale(0.5)} 30%{opacity:1;transform:scale(1.3)} 70%{opacity:1;transform:scale(1)} 100%{opacity:0;transform:scale(0.8) translateY(-50px)} }
+
+    /* RESPONSIVE */
+    @media(max-width:500px) {
+      .games-grid { grid-template-columns:1fr; }
+      .sd-options { grid-template-columns:1fr; }
+      .pm-grid { grid-template-columns:1fr 1fr; }
+      .wh-cell { width:32px; height:32px; font-size:13px; }
+      .grades-grid { flex-direction:column; align-items:center; }
+    }
+    .loading-dots::after { content:''; animation:dots 1.2s steps(3,end) infinite; }
+    @keyframes dots { 0%{content:''} 33%{content:'.'} 66%{content:'..'} 100%{content:'...'} }
+    .glow-text { text-shadow:0 0 15px currentColor; }
+    .mt-20 { margin-top:20px; }
+  </style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+// ═══════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════
+const state = {
+  screen: 'welcome',
+  grade: null,
+  difficulty: null,
+  gameType: null,
+  score: 0,
+  lives: 3,
+  questionIndex: 0,
+  totalQ: 8,
+  hintActive: false,
+  hintsLeft: 3,
+  romiHP: 100,
+  demonHP: 100,
+  progress: JSON.parse(localStorage.getItem('kpopProgress') || '{}'),
+  // game-specific state
+  lq: { filledLetters: {}, usedPoolIndices: [] },
+  wh: { selecting: false, startCell: null, currentCells: [], foundWords: [] },
+  pm: { selectedWord: null, matchedPairs: [] },
+};
+
+function saveProgress() {
+  localStorage.setItem('kpopProgress', JSON.stringify(state.progress));
+}
+
+function getKey() { return `${state.grade}-${state.difficulty}-${state.gameType}`; }
+
+function getStars(key) {
+  const k = key || getKey();
+  return state.progress[k] || 0;
+}
+
+function setStars(score) {
+  const key = getKey();
+  const pct = score / state.totalQ;
+  const stars = pct >= 0.9 ? 3 : pct >= 0.6 ? 2 : pct >= 0.3 ? 1 : 0;
+  if (stars > (state.progress[key] || 0)) {
+    state.progress[key] = stars;
+    saveProgress();
+  }
+  return stars;
+}
+
+// ═══════════════════════════════════════
+//  CONTENT DATABASE
+// ═══════════════════════════════════════
+const CONTENT = {
+  grade4: {
+    easy: {
+      letterQuest: [
+        { word:'CAT', blanks:[1], image:'🐱', hint:'חיה אהובה שאוהבת לנקר ולישון' },
+        { word:'DOG', blanks:[1], image:'🐶', hint:'חבר נאמן של האדם' },
+        { word:'SUN', blanks:[1], image:'☀️', hint:'הכוכב שמאיר לנו ביום' },
+        { word:'RED', blanks:[1], image:'🍎', hint:'צבע של תפוח ולב' },
+        { word:'BIG', blanks:[1], image:'🐘', hint:'ההפך מקטן' },
+        { word:'RUN', blanks:[1], image:'🏃', hint:'לנוע מהר ברגליים' },
+        { word:'HOT', blanks:[1], image:'🌡️', hint:'הפך של קר' },
+        { word:'FLY', blanks:[1], image:'🦋', hint:'מה שציפורים עושות' },
+      ],
+      sentenceDuel: [
+        { sentence:'The cat ___ black.', options:['is','are','am','be'], answer:'is', hint:'אחרי יחיד (cat) נשתמש ב-is' },
+        { sentence:'I ___ happy today.', options:['am','is','are','be'], answer:'am', hint:'אחרי I תמיד נשתמש ב-am' },
+        { sentence:'___ apple is red.', options:['An','A','The','One'], answer:'An', hint:'לפני מילה שמתחילה בתנועה (a,e,i,o,u) נשתמש ב-AN' },
+        { sentence:'She ___ a dog.', options:['has','have','had','is'], answer:'has', hint:'אחרי she/he/it נשתמש ב-has' },
+        { sentence:'The dogs ___ big.', options:['are','is','am','be'], answer:'are', hint:'אחרי רבים (dogs) נשתמש ב-are' },
+        { sentence:'I like ___ pizza.', options:['eat','eating','ate','eats'], answer:'eating', hint:'אחרי like נשתמש ב-ing' },
+        { sentence:'There ___ two books.', options:['are','is','am','has'], answer:'are', hint:'אחרי מספר גדול מ-1 נשתמש ב-are' },
+        { sentence:'He ___ to school.', options:['goes','go','went','going'], answer:'goes', hint:'אחרי he/she/it מוסיפים -s לפועל' },
+      ],
+      wordHunt: {
+        words: ['CAT','DOG','SUN','RED','BIG','RUN','HOT'],
+        translations: ['חתול','כלב','שמש','אדום','גדול','לרוץ','חם'],
+        gridSize: 8,
+      },
+      pictureMatch: [
+        { emoji:'🐱', word:'cat', he:'חתול' },
+        { emoji:'🐶', word:'dog', he:'כלב' },
+        { emoji:'☀️', word:'sun', he:'שמש' },
+        { emoji:'🍎', word:'apple', he:'תפוח' },
+        { emoji:'📚', word:'book', he:'ספר' },
+        { emoji:'🏠', word:'home', he:'בית' },
+        { emoji:'🌳', word:'tree', he:'עץ' },
+        { emoji:'🐟', word:'fish', he:'דג' },
+      ],
+    },
+    medium: {
+      letterQuest: [
+        { word:'CLOUD', blanks:[2,3], image:'☁️', hint:'מה שנוצר בשמים לפני גשם' },
+        { word:'SHIRT', blanks:[2,3], image:'👕', hint:'בגד עליון שלובשים' },
+        { word:'ANGRY', blanks:[1,3], image:'😠', hint:'כשאתה לא שמח בכלל' },
+        { word:'BREAD', blanks:[2,4], image:'🍞', hint:'אוכלים אותו עם חמאה' },
+        { word:'THINK', blanks:[1,3], image:'🤔', hint:'מה שהמוח עושה' },
+        { word:'DREAM', blanks:[2,4], image:'💤', hint:'מה שקורה בשינה' },
+        { word:'CLEAN', blanks:[1,3], image:'🧹', hint:'הפך של מלוכלך' },
+        { word:'BRAVE', blanks:[2,4], image:'🦁', hint:'לא פחדן' },
+      ],
+      sentenceDuel: [
+        { sentence:'It is ___ today. I need a jacket.', options:['cold','cloudy','hot','windy'], answer:'cold', hint:'כשקר בחוץ צריך מעיל' },
+        { sentence:'She is ___ her homework now.', options:['doing','does','did','done'], answer:'doing', hint:'פעולה שקורת עכשיו - present continuous - פועל+ing' },
+        { sentence:'___ book is on the table.', options:['The','A','An','Some'], answer:'The', hint:'כשמדברים על משהו ספציפי שכבר הוזכר נשתמש ב-THE' },
+        { sentence:'We ___ lunch every day.', options:['eat','eats','eating','ate'], answer:'eat', hint:'עם we/they/I/you נשתמש בצורת הבסיס של הפועל' },
+        { sentence:'The baby is ___.', options:['sleeping','sleeps','sleep','slept'], answer:'sleeping', hint:'הילד ישן עכשיו - present continuous' },
+        { sentence:'I have ___ pencils.', options:['two','a','an','some'], answer:'two', hint:'מונים עצמים שאפשר לספור' },
+        { sentence:'___ umbrella is yellow.', options:['The','A','An','Some'], answer:'The', hint:'כשמדברים על מטרייה ספציפית' },
+        { sentence:'He ___ football after school.', options:['plays','play','playing','played'], answer:'plays', hint:'הרגלים עם he/she/it - מוסיפים s' },
+      ],
+      wordHunt: {
+        words: ['CLOUD','SHIRT','BREAD','CLEAN','BRAVE'],
+        translations: ['עננים','חולצה','לחם','נקי','אמיץ'],
+        gridSize: 8,
+      },
+      pictureMatch: [
+        { emoji:'☁️', word:'cloud', he:'ענן' },
+        { emoji:'👕', word:'shirt', he:'חולצה' },
+        { emoji:'🌧️', word:'rain', he:'גשם' },
+        { emoji:'🤔', word:'think', he:'לחשוב' },
+        { emoji:'🍞', word:'bread', he:'לחם' },
+        { emoji:'😠', word:'angry', he:'כועס' },
+        { emoji:'🧹', word:'clean', he:'נקי' },
+        { emoji:'💤', word:'dream', he:'חלום' },
+      ],
+    },
+    hard: {
+      letterQuest: [
+        { word:'ADVENTURE', blanks:[2,5,7], image:'🗺️', hint:'מסע מרגש לעולמות חדשים' },
+        { word:'MAGICAL', blanks:[2,4,6], image:'✨', hint:'קסום ומיוחד' },
+        { word:'WARRIOR', blanks:[2,5], image:'⚔️', hint:'לוחם אמיץ' },
+        { word:'PROTECT', blanks:[2,5], image:'🛡️', hint:'לשמור על מישהו' },
+        { word:'ANCIENT', blanks:[1,4,6], image:'🏛️', hint:'ישן מאוד, עתיק' },
+        { word:'MYSTERY', blanks:[2,5], image:'🔍', hint:'סוד שצריך לפתור' },
+        { word:'TREASURE', blanks:[3,6], image:'💎', hint:'אוצר יקר' },
+        { word:'CHAMPION', blanks:[3,6], image:'🏆', hint:'המנצח הגדול ביותר' },
+      ],
+      sentenceDuel: [
+        { sentence:'The warrior is ___ than the monster.', options:['stronger','more strong','strong','strongest'], answer:'stronger', hint:'להשוות שניים - לשמות תואר קצרים מוסיפים -er' },
+        { sentence:'She ___ the ancient spell yesterday.', options:['discovered','discovers','discover','discovering'], answer:'discovered', hint:'פעולה שהתרחשה אתמול - past simple, מוסיפים -ed' },
+        { sentence:'This is the ___ adventure ever!', options:['greatest','great','greater','most great'], answer:'greatest', hint:'עליון - the best, the greatest - מוסיפים -est' },
+        { sentence:'The demons ___ attacking the village.', options:['are','is','was','were'], answer:'are', hint:'פעולה שקורת עכשיו עם רבים' },
+        { sentence:'Romi ___ magic since she was young.', options:['has learned','learned','learns','learning'], answer:'has learned', hint:'משהו שהתחיל בעבר וממשיך - has + past participle' },
+        { sentence:'The treasure ___ hidden in the cave.', options:['was','is','were','be'], answer:'was', hint:'הייתה מוסתרת - עבר פסיבי' },
+        { sentence:'They must ___ the demon hunters.', options:['become','becomes','becoming','became'], answer:'become', hint:'אחרי must הפועל תמיד בצורת הבסיס' },
+        { sentence:'Romi fights ___ she can win.', options:['as if','because','so that','unless'], answer:'so that', hint:'כדי שתוכל לנצח - מטרה' },
+      ],
+      wordHunt: {
+        words: ['WARRIOR','PROTECT','ANCIENT','MYSTERY'],
+        translations: ['לוחם','להגן','עתיק','מסתורין'],
+        gridSize: 9,
+      },
+      pictureMatch: [
+        { emoji:'⚔️', word:'warrior', he:'לוחם' },
+        { emoji:'🛡️', word:'protect', he:'להגן' },
+        { emoji:'✨', word:'magical', he:'קסום' },
+        { emoji:'💎', word:'treasure', he:'אוצר' },
+        { emoji:'🏆', word:'champion', he:'אלוף' },
+        { emoji:'🔍', word:'mystery', he:'מסתורין' },
+        { emoji:'🗺️', word:'adventure', he:'הרפתקה' },
+        { emoji:'🏛️', word:'ancient', he:'עתיק' },
+      ],
+    },
+  },
+  grade5: {
+    easy: {
+      letterQuest: [
+        { word:'HOBBY', blanks:[1,3], image:'🎨', hint:'פעילות שאוהבים לעשות בזמן פנוי' },
+        { word:'MUSIC', blanks:[2,4], image:'🎵', hint:'מה שיוצרים עם כלים ושירה' },
+        { word:'DANCE', blanks:[2,4], image:'💃', hint:'לזוז לפי קצב' },
+        { word:'TRAIN', blanks:[2,4], image:'🚂', hint:'כלי תחבורה על מסילות' },
+        { word:'PHONE', blanks:[2,4], image:'📱', hint:'אפשר לדבר ולשלוח הודעות' },
+        { word:'BEACH', blanks:[1,3], image:'🏖️', hint:'מקום ליד הים עם חול' },
+        { word:'SPORT', blanks:[2,4], image:'⚽', hint:'פעילות גופנית תחרותית' },
+        { word:'NIGHT', blanks:[1,3], image:'🌙', hint:'הפך של יום' },
+      ],
+      sentenceDuel: [
+        { sentence:'Yesterday, I ___ to the park.', options:['walked','walk','walking','walks'], answer:'walked', hint:'פעולה שהתרחשה אתמול - Past Simple, מוסיפים -ed' },
+        { sentence:'She ___ a new song last week.', options:['learned','learn','learns','learning'], answer:'learned', hint:'שבוע שעבר - עבר פשוט' },
+        { sentence:'My hobby is ___ music.', options:['listening to','listen to','listens to','listened to'], answer:'listening to', hint:'אחרי is/am/are + ing כשמדברים על תחביב' },
+        { sentence:'He ___ to the beach yesterday.', options:['went','go','goes','going'], answer:'went', hint:'פועל לא סדיר - go הופך ל-went בעבר' },
+        { sentence:'She is ___ than her brother.', options:['taller','more tall','tallest','tall'], answer:'השוואה ב-er','hint':'להשוות שניים - מוסיפים -er' },
+        { sentence:'I ___ my homework before dinner.', options:['finished','finish','finishes','finishing'], answer:'finished', hint:'פעולה שהסתיימה - Past Simple' },
+        { sentence:'They ___ football every Saturday.', options:['play','played','playing','plays'], answer:'play', hint:'הרגל קבוע - Present Simple עם they' },
+        { sentence:'This book is ___ interesting ___ that one.', options:['more...than','most...of','much...then','more...as'], answer:'more...than', hint:'להשוות עם מילה ארוכה - more...than' },
+      ],
+      wordHunt: {
+        words: ['HOBBY','MUSIC','DANCE','SPORT','BEACH'],
+        translations: ['תחביב','מוזיקה','ריקוד','ספורט','חוף'],
+        gridSize: 8,
+      },
+      pictureMatch: [
+        { emoji:'🎨', word:'hobby', he:'תחביב' },
+        { emoji:'🎵', word:'music', he:'מוזיקה' },
+        { emoji:'💃', word:'dance', he:'ריקוד' },
+        { emoji:'⚽', word:'sport', he:'ספורט' },
+        { emoji:'🚂', word:'train', he:'רכבת' },
+        { emoji:'🏖️', word:'beach', he:'חוף' },
+        { emoji:'📱', word:'phone', he:'טלפון' },
+        { emoji:'🌙', word:'night', he:'לילה' },
+      ],
+    },
+    medium: {
+      letterQuest: [
+        { word:'JOURNEY', blanks:[2,4,6], image:'🧳', hint:'טיול ארוך ממקום למקום' },
+        { word:'VILLAGE', blanks:[2,5], image:'🏘️', hint:'עיר קטנה בכפר' },
+        { word:'CLIMATE', blanks:[2,5], image:'🌍', hint:'מזג האוויר הקבוע של אזור' },
+        { word:'CULTURE', blanks:[2,5], image:'🎭', hint:'מנהגים ואמנות של עם' },
+        { word:'MARKET', blanks:[2,4], image:'🛒', hint:'מקום לקנות ולמכור' },
+        { word:'FOREST', blanks:[2,4], image:'🌲', hint:'הרבה עצים ביחד' },
+        { word:'DESERT', blanks:[2,4], image:'🏜️', hint:'מקום חם ויבש' },
+        { word:'BRIDGE', blanks:[2,4], image:'🌉', hint:'מעביר מצד לצד מעל מים' },
+      ],
+      sentenceDuel: [
+        { sentence:'I ___ my bike to school yesterday.', options:['rode','ride','rides','riding'], answer:'rode', hint:'פועל לא סדיר - ride הופך ל-rode בעבר' },
+        { sentence:'She ___ the book three times.', options:['read','reads','reading','readed'], answer:'read', hint:'פועל לא סדיר - read בעבר נשמע "red"' },
+        { sentence:'The mountain is ___ than the hill.', options:['higher','more high','highest','most high'], answer:'higher', hint:'השוואת שניים - high הופך ל-higher' },
+        { sentence:'Which city is ___ in the world?', options:['the biggest','bigger','most big','big'], answer:'the biggest', hint:'עליון מבין כולם - the + ___est' },
+        { sentence:'We ___ a campfire in the forest.', options:['made','make','makes','making'], answer:'made', hint:'פועל לא סדיר - make הופך ל-made בעבר' },
+        { sentence:'The population of this village ___ small.', options:['is','are','were','have'], answer:'is', hint:'population - מילה יחידה - is' },
+        { sentence:'The climate here is ___ than in the north.', options:['hotter','more hot','hottest','most hotter'], answer:'hotter', hint:'לפועל קצר עם עיצור כפול מוסיפים -er' },
+        { sentence:'They ___ at the market all morning.', options:['were shopping','are shopping','shop','shops'], answer:'were shopping', hint:'פעולה שנמשכה בעבר - past continuous' },
+      ],
+      wordHunt: {
+        words: ['JOURNEY','VILLAGE','FOREST','DESERT','MARKET'],
+        translations: ['מסע','כפר','יער','מדבר','שוק'],
+        gridSize: 9,
+      },
+      pictureMatch: [
+        { emoji:'🧳', word:'journey', he:'מסע' },
+        { emoji:'🏘️', word:'village', he:'כפר' },
+        { emoji:'🌲', word:'forest', he:'יער' },
+        { emoji:'🏜️', word:'desert', he:'מדבר' },
+        { emoji:'🌍', word:'climate', he:'אקלים' },
+        { emoji:'🎭', word:'culture', he:'תרבות' },
+        { emoji:'🌉', word:'bridge', he:'גשר' },
+        { emoji:'🛒', word:'market', he:'שוק' },
+      ],
+    },
+    hard: {
+      letterQuest: [
+        { word:'COOPERATION', blanks:[2,5,8], image:'🤝', hint:'עבודה משותפת עם אחרים' },
+        { word:'INDEPENDENCE', blanks:[3,6,9], image:'🗽', hint:'חופש לעשות דברים לבד' },
+        { word:'ACHIEVEMENT', blanks:[2,6,9], image:'🏅', hint:'הצלחה לאחר עבודה קשה' },
+        { word:'ENVIRONMENT', blanks:[2,6,8], image:'🌿', hint:'הסביבה הטבעית שלנו' },
+        { word:'TEMPERATURE', blanks:[3,7,10], image:'🌡️', hint:'מידת החום' },
+        { word:'POPULATION', blanks:[3,6,8], image:'👥', hint:'מספר תושבים' },
+        { word:'COMPETITION', blanks:[2,6,9], image:'🏁', hint:'תחרות בין אנשים' },
+        { word:'RESPONSIBLE', blanks:[3,7,10], image:'⚖️', hint:'מישהו שאפשר לסמוך עליו' },
+      ],
+      sentenceDuel: [
+        { sentence:'If she ___ harder, she would win.', options:['tried','tries','try','trying'], answer:'tried', hint:'משפט תנאי - if + past simple' },
+        { sentence:'The team ___ the competition last year.', options:['won','win','wins','winning'], answer:'won', hint:'פועל לא סדיר - win הופך ל-won' },
+        { sentence:'She is the ___ athlete in the school.', options:['most talented','more talented','talent','talented'], answer:'most talented', hint:'עליון עם מילה ארוכה - most + adjective' },
+        { sentence:'Without cooperation, they ___ succeed.', options:["couldn't","can't",'won\'t','didn\'t'], answer:"couldn't", hint:'חוסר יכולת בעבר - could + not' },
+        { sentence:'The environment ___ greatly in recent years.', options:['has changed','changed','change','changes'], answer:'has changed', hint:'שינוי שהתרחש בעבר ורלוונטי עכשיו - present perfect' },
+        { sentence:'She takes responsibility ___ her actions.', options:['for','of','about','to'], answer:'for', hint:'take responsibility FOR something' },
+        { sentence:'The more you practice, ___ you become.', options:['the better','better','the more better','more better'], answer:'the better', hint:'the more... the better - מבנה מיוחד' },
+        { sentence:'Competition ___ us to work harder.', options:['motivates','motivate','motivated','motivating'], answer:'motivates', hint:'נושא יחידאי - competition - motivates' },
+      ],
+      wordHunt: {
+        words: ['COOPERATION','INDEPENDENCE','ACHIEVEMENT','ENVIRONMENT'],
+        translations: ['שיתוף פעולה','עצמאות','הישג','סביבה'],
+        gridSize: 10,
+      },
+      pictureMatch: [
+        { emoji:'🤝', word:'cooperation', he:'שיתוף פעולה' },
+        { emoji:'🏅', word:'achievement', he:'הישג' },
+        { emoji:'🌿', word:'environment', he:'סביבה' },
+        { emoji:'🗽', word:'independence', he:'עצמאות' },
+        { emoji:'🏁', word:'competition', he:'תחרות' },
+        { emoji:'👥', word:'population', he:'אוכלוסייה' },
+        { emoji:'🌡️', word:'temperature', he:'טמפרטורה' },
+        { emoji:'⚖️', word:'responsible', he:'אחראי' },
+      ],
+    },
+  },
+  grade6: {
+    easy: {
+      letterQuest: [
+        { word:'EXCITED', blanks:[2,5], image:'🎉', hint:'מרוגש ושמח מאוד' },
+        { word:'NERVOUS', blanks:[2,5], image:'😰', hint:'מתוח ודואג' },
+        { word:'PLANET', blanks:[2,4], image:'🪐', hint:'כוכב לכת' },
+        { word:'SCIENCE', blanks:[2,5], image:'🔬', hint:'מדע - לימוד העולם' },
+        { word:'ENERGY', blanks:[1,4], image:'⚡', hint:'כוח וחיוניות' },
+        { word:'PROMISE', blanks:[2,5], image:'🤞', hint:'התחייבות שנותנים' },
+        { word:'SIGNAL', blanks:[2,4], image:'📶', hint:'אות או סימן' },
+        { word:'CONFIRM', blanks:[2,5], image:'✅', hint:'לאשר שמשהו נכון' },
+      ],
+      sentenceDuel: [
+        { sentence:'I will ___ you tomorrow.', options:['call','calls','calling','called'], answer:'call', hint:'עתיד עם will - הפועל בצורת הבסיס' },
+        { sentence:'She is ___ to visit Paris next summer.', options:['going','go','gone','goes'], answer:'going', hint:'תוכניות עתידיות - be going to' },
+        { sentence:'Have you ever ___ a K-pop concert?', options:['seen','see','saw','seeing'], answer:'seen', hint:'Present Perfect - have + past participle' },
+        { sentence:'They ___ in this city for five years.', options:['have lived','lived','live','living'], answer:'have lived', hint:'מתחיל בעבר ומשיך עד עכשיו - have + past participle' },
+        { sentence:'By the time she arrived, he ___ left.', options:['had already','has already','already','will'], answer:'had already', hint:'עבר לפני עבר - past perfect' },
+        { sentence:'The experiment ___ be done carefully.', options:['must','musts','have to','should'], answer:'must', hint:'חובה - must + infinitive' },
+        { sentence:'She suggested ___ to the new planet.', options:['traveling','to travel','travel','traveled'], answer:'traveling', hint:'אחרי suggest נשתמש ב-ing' },
+        { sentence:'If I ___ more time, I would study science.', options:['had','have','has','will have'], answer:'had', hint:'משפט תנאי סוג 2 - if + past simple' },
+      ],
+      wordHunt: {
+        words: ['PLANET','SCIENCE','ENERGY','SIGNAL','EXCITED'],
+        translations: ['כוכב לכת','מדע','אנרגיה','אות','נרגש'],
+        gridSize: 8,
+      },
+      pictureMatch: [
+        { emoji:'🪐', word:'planet', he:'כוכב לכת' },
+        { emoji:'🔬', word:'science', he:'מדע' },
+        { emoji:'⚡', word:'energy', he:'אנרגיה' },
+        { emoji:'🎉', word:'excited', he:'נרגש' },
+        { emoji:'😰', word:'nervous', he:'מתוח' },
+        { emoji:'🤞', word:'promise', he:'הבטחה' },
+        { emoji:'✅', word:'confirm', he:'לאשר' },
+        { emoji:'📶', word:'signal', he:'אות' },
+      ],
+    },
+    medium: {
+      letterQuest: [
+        { word:'HYPOTHESIS', blanks:[3,6,8], image:'💡', hint:'השערה מדעית שצריך להוכיח' },
+        { word:'ECOSYSTEM', blanks:[2,5,7], image:'🌊', hint:'מערכת אקולוגית - יצורים וסביבתם' },
+        { word:'RENEWABLE', blanks:[3,6,8], image:'♻️', hint:'אנרגיה שמתחדשת - שמש ורוח' },
+        { word:'BIODIVERSITY', blanks:[3,7,10], image:'🦁', hint:'מגוון ביולוגי - סוגי יצורים' },
+        { word:'INVESTIGATE', blanks:[2,6,9], image:'🔍', hint:'לחקור ולבדוק לעומק' },
+        { word:'COMMUNICATE', blanks:[3,7,10], image:'💬', hint:'להעביר מסרים לאחרים' },
+        { word:'SUSTAINABLE', blanks:[3,7,10], image:'🌱', hint:'ידידותי לסביבה לאורך זמן' },
+        { word:'PERSPECTIVE', blanks:[3,7,10], image:'👁️', hint:'נקודת מבט' },
+      ],
+      sentenceDuel: [
+        { sentence:'Scientists ___ the data for months.', options:['have been analyzing','analyze','analyzed','analyzing'], answer:'have been analyzing', hint:'פעולה שנמשכת מהעבר עד עכשיו - present perfect continuous' },
+        { sentence:'The ecosystem ___ if we don\'t act now.', options:['will collapse','collapses','collapsed','collapsing'], answer:'will collapse', hint:'תוצאה עתידית של חוסר פעולה - will' },
+        { sentence:'___ we protect biodiversity, species will disappear.', options:['Unless','Although','Because','Since'], answer:'Unless', hint:'אם לא - unless' },
+        { sentence:'The hypothesis ___ by several experiments.', options:['was confirmed','confirmed','has confirmed','confirms'], answer:'was confirmed', hint:'פאסיב - was + past participle' },
+        { sentence:'She communicates ___ effectively with her team.', options:['very','much','more','most'], answer:'very', hint:'לחזק תואר הפועל בהצהרה חיובית' },
+        { sentence:'Renewable energy sources ___ becoming more popular.', options:['are','is','were','was'], answer:'are', hint:'נושא רבים - renewable energy sources' },
+        { sentence:'The scientist ___ the experiment three times.', options:['has repeated','repeats','repeat','repeating'], answer:'has repeated', hint:'Present Perfect - has + past participle' },
+        { sentence:'From a different ___, the problem looks simpler.', options:['perspective','prospective','progressive','protective'], answer:'perspective', hint:'נקודת מבט - perspective' },
+      ],
+      wordHunt: {
+        words: ['ECOSYSTEM','RENEWABLE','INVESTIGATE','COMMUNICATE'],
+        translations: ['מערכת אקולוגית','מתחדש','לחקור','לתקשר'],
+        gridSize: 10,
+      },
+      pictureMatch: [
+        { emoji:'🌊', word:'ecosystem', he:'מערכת אקולוגית' },
+        { emoji:'♻️', word:'renewable', he:'מתחדש' },
+        { emoji:'🔍', word:'investigate', he:'לחקור' },
+        { emoji:'💬', word:'communicate', he:'לתקשר' },
+        { emoji:'💡', word:'hypothesis', he:'השערה' },
+        { emoji:'🦁', word:'biodiversity', he:'מגוון ביולוגי' },
+        { emoji:'🌱', word:'sustainable', he:'בר קיימא' },
+        { emoji:'👁️', word:'perspective', he:'נקודת מבט' },
+      ],
+    },
+    hard: {
+      letterQuest: [
+        { word:'APPROXIMATELY', blanks:[3,7,10,12], image:'≈', hint:'בערך, לא מדויק' },
+        { word:'CONSEQUENTLY', blanks:[3,7,10,11], image:'🔗', hint:'כתוצאה מכך' },
+        { word:'FURTHERMORE', blanks:[4,7,10], image:'➕', hint:'יתרה מכך, בנוסף' },
+        { word:'NEVERTHELESS', blanks:[4,8,11], image:'🔄', hint:'למרות זאת' },
+        { word:'SIGNIFICANT', blanks:[3,7,9], image:'⭐', hint:'חשוב ומשמעותי' },
+        { word:'INSUFFICIENT', blanks:[2,6,9,11], image:'📉', hint:'לא מספיק' },
+        { word:'EFFECTIVELY', blanks:[3,7,10], image:'🎯', hint:'בצורה יעילה' },
+        { word:'CONCLUDE', blanks:[2,5,7], image:'🏁', hint:'להגיע למסקנה' },
+      ],
+      sentenceDuel: [
+        { sentence:'The evidence ___ that climate change is accelerating.', options:['suggests','suggest','suggested','is suggesting'], answer:'suggests', hint:'עובדה כללית - present simple' },
+        { sentence:'___, the team failed to meet the deadline.', options:['Consequently','Although','Despite','Whereas'], answer:'Consequently', hint:'כתוצאה מכך - consequently בתחילת משפט' },
+        { sentence:'The data is ___; we need more samples.', options:['insufficient','sufficiently','sufficient','insufficiency'], answer:'insufficient', hint:'לא מספיק - תואר שם (adjective)' },
+        { sentence:'___ the challenges, Romi succeeded.', options:['Despite','Although','Because','Since'], answer:'Despite', hint:'למרות - despite + noun/gerund' },
+        { sentence:'The results ___ analyzed before conclusions can be drawn.', options:['must be','must have','should','will'], answer:'must be', hint:'פאסיב עם חובה - must be + past participle' },
+        { sentence:'She concluded ___ the experiment was a success.', options:['that','which','what','when'], answer:'that', hint:'אחרי verbs of thinking/saying - that' },
+        { sentence:'___ to previous research, this finding is revolutionary.', options:['Compared','Comparing','Comparison','Compare'], answer:'Compared', hint:'Compared to - בהשוואה ל - participle phrase' },
+        { sentence:'The more evidence we gather, ___ our hypothesis becomes.', options:['the stronger','stronger','most strong','the most strong'], answer:'the stronger', hint:'the more... the + comparative' },
+      ],
+      wordHunt: {
+        words: ['SIGNIFICANT','EFFECTIVELY','CONCLUDE','CONSEQUENTLY'],
+        translations: ['משמעותי','בצורה יעילה','להסיק','כתוצאה מכך'],
+        gridSize: 10,
+      },
+      pictureMatch: [
+        { emoji:'⭐', word:'significant', he:'משמעותי' },
+        { emoji:'🎯', word:'effectively', he:'ביעילות' },
+        { emoji:'🏁', word:'conclude', he:'להסיק' },
+        { emoji:'🔗', word:'consequently', he:'כתוצאה' },
+        { emoji:'➕', word:'furthermore', he:'יתרה מכך' },
+        { emoji:'🔄', word:'nevertheless', he:'למרות זאת' },
+        { emoji:'📉', word:'insufficient', he:'לא מספיק' },
+        { emoji:'≈', word:'approximately', he:'בערך' },
+      ],
+    },
+  },
+};
+
+// Fix the grade5 easy sentenceDuel entry
+CONTENT.grade5.easy.sentenceDuel[4] = {
+  sentence:'She is ___ than her brother.',
+  options:['taller','more tall','tallest','tall'],
+  answer:'taller',
+  hint:'להשוות שניים - לשמות תואר קצרים מוסיפים -er'
+};
+
+// ═══════════════════════════════════════
+//  WORD HUNT ENGINE
+// ═══════════════════════════════════════
+function generateWordGrid(words, size) {
+  const grid = Array.from({length:size}, () => Array(size).fill(''));
+  const placed = [];
+  const ALPHA = 'ABCDEFGHIJKLMNOPRSTUVWYZ';
+
+  for (const word of words) {
+    let placed_word = false;
+    for (let attempt = 0; attempt < 100 && !placed_word; attempt++) {
+      const horiz = Math.random() < 0.5;
+      const row = Math.floor(Math.random() * (horiz ? size : size - word.length));
+      const col = Math.floor(Math.random() * (horiz ? size - word.length : size));
+      let ok = true;
+      for (let i = 0; i < word.length; i++) {
+        const r = horiz ? row : row + i;
+        const c = horiz ? col + i : col;
+        if (grid[r][c] !== '' && grid[r][c] !== word[i]) { ok = false; break; }
+      }
+      if (ok) {
+        for (let i = 0; i < word.length; i++) {
+          const r = horiz ? row : row + i;
+          const c = horiz ? col + i : col;
+          grid[r][c] = word[i];
+        }
+        placed.push({ word, row, col, horiz });
+        placed_word = true;
+      }
+    }
+  }
+  // fill blanks
+  for (let r = 0; r < size; r++)
+    for (let c = 0; c < size; c++)
+      if (!grid[r][c]) grid[r][c] = ALPHA[Math.floor(Math.random() * ALPHA.length)];
+
+  return { grid, placed };
+}
+
+// ═══════════════════════════════════════
+//  ROMI SVG
+// ═══════════════════════════════════════
+function romiSVG(mood = 'normal') {
+  const eyeColor = mood === 'happy' ? '#00ff88' : mood === 'battle' ? '#ff2d9e' : '#00f5d4';
+  const mouthPath = mood === 'happy' ? 'M42 68 Q50 76 58 68' : mood === 'sad' ? 'M44 72 Q50 66 56 72' : 'M44 68 Q50 73 56 68';
+  return `<svg viewBox="0 0 120 175" class="romi-svg" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <radialGradient id="skinGrad" cx="50%" cy="40%"><stop offset="0%" stop-color="#fde8c8"/><stop offset="100%" stop-color="#f4c68a"/></radialGradient>
+      <radialGradient id="hairGrad" cx="50%" cy="30%"><stop offset="0%" stop-color="#9d00ff"/><stop offset="100%" stop-color="#5a0099"/></radialGradient>
+      <linearGradient id="bodyGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#3d0080"/><stop offset="100%" stop-color="#1a0040"/></linearGradient>
+      <linearGradient id="swordGrad" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" stop-color="#ff2d9e"/><stop offset="100%" stop-color="#ffd700"/></linearGradient>
+    </defs>
+    <!-- Shadow -->
+    <ellipse cx="60" cy="168" rx="35" ry="7" fill="#000" opacity="0.3"/>
+    <!-- Hair back -->
+    <ellipse cx="60" cy="42" rx="32" ry="26" fill="url(#hairGrad)"/>
+    <rect x="28" y="42" width="12" height="55" rx="6" fill="#7a00cc"/>
+    <rect x="80" y="42" width="12" height="55" rx="6" fill="#7a00cc"/>
+    <!-- Body -->
+    <rect x="33" y="90" width="54" height="58" rx="14" fill="url(#bodyGrad)"/>
+    <!-- Cape -->
+    <path d="M33 105 L10 155 L36 120 Z" fill="#5a0099" opacity="0.85"/>
+    <path d="M87 105 L110 155 L84 120 Z" fill="#5a0099" opacity="0.85"/>
+    <!-- Legs -->
+    <rect x="38" y="144" width="16" height="26" rx="8" fill="#2a0060"/>
+    <rect x="66" y="144" width="16" height="26" rx="8" fill="#2a0060"/>
+    <!-- Boots -->
+    <ellipse cx="46" cy="170" rx="12" ry="6" fill="#0d0021"/>
+    <ellipse cx="74" cy="170" rx="12" ry="6" fill="#0d0021"/>
+    <!-- Head -->
+    <circle cx="60" cy="60" r="28" fill="url(#skinGrad)"/>
+    <!-- Hair front/bangs -->
+    <path d="M32 52 Q38 30 60 26 Q82 30 88 52 Q80 42 60 40 Q40 42 32 52" fill="#8800ee"/>
+    <!-- Belt -->
+    <rect x="33" y="102" width="54" height="8" rx="4" fill="#ff2d9e"/>
+    <circle cx="60" cy="106" r="5" fill="#ffd700"/>
+    <!-- Blush -->
+    <ellipse cx="42" cy="66" rx="7" ry="4" fill="#ff9999" opacity="0.45"/>
+    <ellipse cx="78" cy="66" rx="7" ry="4" fill="#ff9999" opacity="0.45"/>
+    <!-- Eyes -->
+    <ellipse cx="48" cy="58" rx="7" ry="8" fill="white"/>
+    <ellipse cx="72" cy="58" rx="7" ry="8" fill="white"/>
+    <circle cx="48" cy="58" r="4.5" fill="${eyeColor}"/>
+    <circle cx="72" cy="58" r="4.5" fill="${eyeColor}"/>
+    <circle cx="49" cy="56" r="1.5" fill="white"/>
+    <circle cx="73" cy="56" r="1.5" fill="white"/>
+    <!-- Eyelashes -->
+    <path d="M41 52 Q45 49 48 51" stroke="#333" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <path d="M65 52 Q69 49 72 51" stroke="#333" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <!-- Mouth -->
+    <path d="${mouthPath}" stroke="#cc4466" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <!-- Arms -->
+    <rect x="8" y="88" width="27" height="12" rx="6" fill="#3d0080"/>
+    <rect x="85" y="88" width="27" height="12" rx="6" fill="#3d0080"/>
+    <!-- Gloves -->
+    <circle cx="12" cy="94" r="9" fill="#2a0060"/>
+    <circle cx="108" cy="94" r="9" fill="#2a0060"/>
+    <!-- Sword -->
+    <rect x="100" y="40" width="5" height="56" rx="2.5" fill="url(#swordGrad)"/>
+    <path d="M102.5 36 L96 50 L109 50 Z" fill="#ff2d9e"/>
+    <rect x="94" y="70" width="17" height="5" rx="2.5" fill="#ffd700"/>
+    <!-- Sword sparkles -->
+    <circle cx="102" cy="38" r="4" fill="#ff2d9e" opacity="0.8">
+      <animate attributeName="r" values="4;6;4" dur="1.2s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.8;0.3;0.8" dur="1.2s" repeatCount="indefinite"/>
+    </circle>
+    <!-- Star accessories -->
+    <text x="18" y="60" font-size="12" fill="#ffd700" opacity="0.9">✦</text>
+    <text x="85" y="50" font-size="10" fill="#00f5d4" opacity="0.8">✦</text>
+  </svg>`;
+}
+
+function demonSVG(type = 'normal') {
+  const colors = { normal:'#cc2200', boss:'#6600cc', mini:'#884400' };
+  const c = colors[type] || colors.normal;
+  return `<div style="font-size:70px;filter:drop-shadow(0 0 15px ${c});animation:romi-float 2s ease-in-out infinite;">
+    ${type === 'boss' ? '👾' : type === 'mini' ? '👺' : '👿'}
+  </div>`;
+}
+
+// ═══════════════════════════════════════
+//  RENDER UTILITIES
+// ═══════════════════════════════════════
+function starsHTML(count) {
+  return [1,2,3].map(i => `<span class="star ${i <= count ? 'earned' : ''}">⭐</span>`).join('');
+}
+
+function diffLabel(d) {
+  return d === 'easy' ? '🟢 קל' : d === 'medium' ? '🟡 בינוני' : '🔴 קשה';
+}
+function gradeLabel(g) {
+  return `כיתה ${g === 'grade4' ? 'ד' : g === 'grade5' ? 'ה' : 'ו'}`;
+}
+
+function createParticles() {
+  const emojis = ['🌸','✨','⭐','💫','🌟','🎵','🌺','🦋'];
+  return Array.from({length:12}, (_,i) => {
+    const e = emojis[i % emojis.length];
+    const left = (i * 8.5) % 100;
+    const delay = (i * 0.3) % 4;
+    return `<div class="particle" style="left:${left}%;animation-delay:${delay}s;animation-duration:${3+Math.random()*3}s">${e}</div>`;
+  }).join('');
+}
+
+function showFeedback(msg) {
+  const el = document.getElementById('feedback');
+  if (!el) return;
+  el.innerHTML = `<div class="feedback-msg">${msg}</div>`;
+  setTimeout(() => { if(el) el.innerHTML = ''; }, 900);
+}
+
+// ═══════════════════════════════════════
+//  SCREEN: WELCOME
+// ═══════════════════════════════════════
+function renderWelcome() {
+  const totalStars = Object.values(state.progress).reduce((a,b) => a+b, 0);
+  return `
+    <div class="screen welcome-bg">
+      ${createParticles()}
+      <div class="game-logo">
+        <div class="title-en">KPop Demon Hunters</div>
+        <div class="title-he">🌸 אנגלית עם רומי 🌸</div>
+      </div>
+      <div class="romi-container">
+        ${romiSVG('happy')}
+        <div class="romi-name">רומי</div>
+        <div class="romi-tagline">הציידת השומרת על עולם הידע</div>
+      </div>
+      ${totalStars > 0 ? `<div class="stats-bar"><div class="stat-item">⭐ ${totalStars} כוכבים</div><div class="stat-item">🏆 ${Object.keys(state.progress).length} ניצחונות</div></div>` : ''}
+      <button class="btn-primary" onclick="navigate('levelSelect')">🎮 התחל הרפתקה!</button>
+      <button class="btn-secondary" onclick="navigate('levelSelect')">📊 המשך מאיפה שעצרת</button>
+    </div>`;
+}
+
+// ═══════════════════════════════════════
+//  SCREEN: LEVEL SELECT
+// ═══════════════════════════════════════
+function renderLevelSelect() {
+  const grades = [
+    { key:'grade4', emoji:'🌱', num:'4 / ד', he:'מתחילים', desc:'חיות, צבעים, משפחה - הבסיס החזק!' },
+    { key:'grade5', emoji:'🌿', num:'5 / ה', he:'מתקדמים', desc:'תחביבים, מקומות, עבר ועתיד' },
+    { key:'grade6', emoji:'🌳', num:'6 / ו', he:'מקצוענים', desc:'מדע, טבע, דקדוק מתקדם' },
+  ];
+  return `
+    <div class="screen level-screen">
+      <button class="back-btn" onclick="navigate('welcome')">← חזרה</button>
+      <div class="screen-title"><span>בחר/י את הרמה שלך</span></div>
+      <div class="grades-grid">
+        ${grades.map(g => `
+          <div class="grade-card" onclick="selectGrade('${g.key}')">
+            <span class="grade-emoji">${g.emoji}</span>
+            <div class="grade-num">כיתה ${g.num}</div>
+            <div class="grade-he">${g.he}</div>
+            <div class="grade-desc">${g.desc}</div>
+            <div class="stars-row">${starsHTML(getGradeStars(g.key))}</div>
+          </div>
+        `).join('')}
+      </div>
+      ${state.grade ? `
+        <div class="diff-selector">
+          <div style="width:100%;text-align:center;color:var(--cyan);font-size:15px;margin-bottom:8px;">בחר/י רמת קושי:</div>
+          <button class="diff-btn diff-easy" onclick="selectDiff('easy')">🟢 קל</button>
+          <button class="diff-btn diff-medium" onclick="selectDiff('medium')">🟡 בינוני</button>
+          <button class="diff-btn diff-hard" onclick="selectDiff('hard')">🔴 קשה</button>
+        </div>
+      ` : ''}
+    </div>`;
+}
+
+function getGradeStars(gradeKey) {
+  const keys = Object.keys(state.progress).filter(k => k.startsWith(gradeKey));
+  if (!keys.length) return 0;
+  const avg = keys.reduce((a,k) => a + state.progress[k], 0) / keys.length;
+  return Math.round(avg);
+}
+
+// ═══════════════════════════════════════
+//  SCREEN: GAME HUB
+// ═══════════════════════════════════════
+function renderGameHub() {
+  const gLabel = gradeLabel(state.grade);
+  const dLabel = diffLabel(state.difficulty);
+  const totalPossible = 4 * 3;
+  const earned = Object.keys(state.progress).filter(k => k.startsWith(state.grade)).length;
+  const pct = Math.round(earned / totalPossible * 100);
+
+  const games = [
+    { key:'letterQuest', icon:'🔤', name:'Letter Quest', nameHe:'מסע האותיות', desc:'השלם/י אותיות חסרות במילה' },
+    { key:'sentenceDuel', icon:'⚔️', name:'Sentence Duel', nameHe:'דו-קרב המשפטים', desc:'בחר/י את המילה הנכונה' },
+    { key:'wordHunt', icon:'🔍', name:'Word Hunt', nameHe:'ציד המילים', desc:'מצא/י מילים בתפזורת' },
+    { key:'pictureMatch', icon:'🖼️', name:'Picture Match', nameHe:'התאמת תמונות', desc:'התאם/י מילים לתמונות' },
+  ];
+
+  return `
+    <div class="screen" style="background:radial-gradient(ellipse at 70% 30%,#2a0060 0%,#0d0021 70%);">
+      <button class="back-btn" onclick="navigate('levelSelect')">← חזרה</button>
+      <div class="hub-header">
+        <div class="level-badge">${gLabel}<br/>${dLabel}</div>
+        <div class="progress-bar-wrap">
+          <div style="font-size:12px;color:rgba(240,230,255,0.6);margin-bottom:4px;">התקדמות: ${pct}%</div>
+          <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${pct}%"></div></div>
+        </div>
+      </div>
+      <div class="games-grid">
+        ${games.map(g => {
+          const stars = getStars(`${state.grade}-${state.difficulty}-${g.key}`);
+          return `
+            <div class="game-card" onclick="startGame('${g.key}')">
+              <span class="game-icon">${g.icon}</span>
+              <div class="game-name">${g.name}</div>
+              <div class="game-name-he">${g.nameHe}</div>
+              <div class="game-desc">${g.desc}</div>
+              <div class="stars-row">${starsHTML(stars)}</div>
+            </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+}
+
+// ═══════════════════════════════════════
+//  GAME INIT
+// ═══════════════════════════════════════
+function startGame(gameType) {
+  state.gameType = gameType;
+  state.score = 0;
+  state.lives = 3;
+  state.questionIndex = 0;
+  state.hintsLeft = 3;
+  state.hintActive = false;
+  state.romiHP = 100;
+  state.demonHP = 100;
+
+  const data = CONTENT[state.grade][state.difficulty][gameType];
+  state.totalQ = Array.isArray(data) ? data.length : (data.words ? data.words.length : 8);
+
+  if (gameType === 'letterQuest') {
+    state.lq = { filledLetters: {}, usedPoolIndices: [] };
+  } else if (gameType === 'wordHunt') {
+    const { grid, placed } = generateWordGrid(data.words, data.gridSize);
+    state.wh = {
+      grid, placed,
+      selecting: false, startCell: null, currentCells: [], foundWords: [],
+      mouseDown: false,
+    };
+  } else if (gameType === 'pictureMatch') {
+    state.pm = { selectedWord: null, matchedPairs: [], selectedImage: null, score: 0 };
+    // shuffle the data
+    state.pm.items = [...data].sort(() => Math.random() - 0.5).slice(0, 4);
+    state.pm.shuffledWords = [...state.pm.items].sort(() => Math.random() - 0.5).map(i => i.word);
+  }
+
+  state.screen = 'game';
+  render();
+}
+
+// ═══════════════════════════════════════
+//  SCREEN: GAME
+// ═══════════════════════════════════════
+function renderGame() {
+  const gameNames = {
+    letterQuest: '🔤 מסע האותיות',
+    sentenceDuel: '⚔️ דו-קרב המשפטים',
+    wordHunt: '🔍 ציד המילים',
+    pictureMatch: '🖼️ התאמת תמונות',
+  };
+  const heartsHtml = [1,2,3].map(i =>
+    `<span class="heart ${i > state.lives ? 'lost' : ''}">❤️</span>`
+  ).join('');
+
+  const gameContent = (() => {
+    switch(state.gameType) {
+      case 'letterQuest': return renderLetterQuest();
+      case 'sentenceDuel': return renderSentenceDuel();
+      case 'wordHunt': return renderWordHunt();
+      case 'pictureMatch': return renderPictureMatch();
+      default: return '<p>טוען<span class="loading-dots"></span></p>';
+    }
+  })();
+
+  const hintBox = state.hintActive ? renderHintBox() : '';
+
+  return `
+    <div class="screen" style="background:#0d0021;justify-content:flex-start;padding-top:80px;">
+      <div id="feedback" class="feedback-overlay"></div>
+      ${hintBox}
+      <button class="back-btn" onclick="navigate('gameHub')">← חזרה</button>
+      <div style="width:100%;max-width:750px;text-align:center;margin-bottom:8px;">
+        <span style="font-size:17px;font-weight:700;color:var(--pink);">${gameNames[state.gameType]}</span>
+      </div>
+      <div class="game-header">
+        <div class="lives">${heartsHtml}</div>
+        <div class="score-display">⭐ ${state.score}</div>
+        <button class="hint-btn" onclick="toggleHint()">💡 רמז (${state.hintsLeft})</button>
+        <div class="question-counter">${state.questionIndex + 1} / ${state.totalQ}</div>
+      </div>
+      <div class="game-area" id="game-area">
+        ${gameContent}
+      </div>
+    </div>`;
+}
+
+// ═══════════════════════════════════════
+//  LETTER QUEST
+// ═══════════════════════════════════════
+function renderLetterQuest() {
+  const data = CONTENT[state.grade][state.difficulty].letterQuest;
+  if (state.questionIndex >= data.length) { endGame(); return ''; }
+  const q = data[state.questionIndex];
+  const word = q.word.toUpperCase();
+
+  const letterBoxes = word.split('').map((letter, i) => {
+    const isBlank = q.blanks.includes(i);
+    const filled = state.lq.filledLetters[i];
+    if (!isBlank) return `<div class="lq-letter">${letter}</div>`;
+    if (filled) return `<div class="lq-letter filled" data-blank="${i}">${filled}</div>`;
+    return `<div class="lq-letter blank" data-blank="${i}">_</div>`;
+  }).join('');
+
+  // Generate pool: correct letters + distractors
+  const correctLetters = q.blanks.map(i => word[i]);
+  const distract = 'ABCDEFGHIJKLMNOPRSTUVWYZ'.split('').filter(l => !correctLetters.includes(l));
+  const poolLetters = [...correctLetters];
+  while (poolLetters.length < 8) {
+    const r = distract[Math.floor(Math.random() * distract.length)];
+    if (!poolLetters.includes(r)) poolLetters.push(r);
+  }
+  // Shuffle pool (but keep stable via seed)
+  const pool = poolLetters.sort((a,b) => a.charCodeAt(0)*7 % 13 - b.charCodeAt(0)*7 % 13);
+
+  const hintText = state.hintActive
+    ? `<div class="lq-hint-text">💡 ${q.hint}</div>` : '';
+
+  const poolHtml = pool.map((letter, idx) => {
+    const isUsed = state.lq.usedPoolIndices.includes(idx);
+    return `<div class="lq-pool-letter ${isUsed ? 'used' : ''}" data-pool="${idx}" onclick="lqPickLetter(${idx}, '${letter}')">${letter}</div>`;
+  }).join('');
+
+  return `
+    <div style="text-align:center;">
+      <div class="lq-image">${q.image}</div>
+      ${hintText}
+      <div class="lq-word-display" id="lq-word">${letterBoxes}</div>
+      <div class="lq-letters-pool" id="lq-pool">${poolHtml}</div>
+      <div class="lq-actions">
+        <button class="btn-clear" onclick="lqClear()">↩️ נקה</button>
+        <button class="btn-check" onclick="lqCheck()">✅ בדוק</button>
+      </div>
+    </div>`;
+}
+
+function lqPickLetter(idx, letter) {
+  const data = CONTENT[state.grade][state.difficulty].letterQuest;
+  const q = data[state.questionIndex];
+  // find first unfilled blank
+  const nextBlank = q.blanks.find(i => !state.lq.filledLetters[i]);
+  if (nextBlank === undefined) return;
+  state.lq.filledLetters[nextBlank] = letter;
+  state.lq.usedPoolIndices.push(idx);
+  refreshGameArea();
+}
+
+function lqClear() {
+  state.lq.filledLetters = {};
+  state.lq.usedPoolIndices = [];
+  refreshGameArea();
+}
+
+function lqCheck() {
+  const data = CONTENT[state.grade][state.difficulty].letterQuest;
+  const q = data[state.questionIndex];
+  const allFilled = q.blanks.every(i => state.lq.filledLetters[i]);
+  if (!allFilled) { showFeedback('⚠️'); return; }
+
+  const correct = q.blanks.every(i => state.lq.filledLetters[i] === q.word[i].toUpperCase());
+  if (correct) {
+    state.score++;
+    showFeedback('✨');
+    setTimeout(() => {
+      state.questionIndex++;
+      state.lq = { filledLetters: {}, usedPoolIndices: [] };
+      if (state.questionIndex >= data.length) { endGame(); return; }
+      refreshGameArea();
+    }, 900);
+  } else {
+    state.lives = Math.max(0, state.lives - 1);
+    showFeedback('💥');
+    state.lq = { filledLetters: {}, usedPoolIndices: [] };
+    if (state.lives <= 0) { setTimeout(endGame, 800); return; }
+    refreshGameArea();
+  }
+}
+
+// ═══════════════════════════════════════
+//  SENTENCE DUEL
+// ═══════════════════════════════════════
+function renderSentenceDuel() {
+  const data = CONTENT[state.grade][state.difficulty].sentenceDuel;
+  if (state.questionIndex >= data.length) { endGame(); return ''; }
+  const q = data[state.questionIndex];
+  const demonType = state.questionIndex > 5 ? 'boss' : state.questionIndex > 3 ? 'mini' : 'normal';
+
+  const sentenceHtml = q.sentence.replace('___', `<span class="sd-blank" id="sd-blank">${state.sd_selected || '___'}</span>`);
+  const hintHtml = state.hintActive
+    ? `<div class="sd-hint-box">💡 <strong>רמז דקדוקי:</strong> ${q.hint}</div>` : '';
+
+  const romiHPPct = Math.round(state.romiHP);
+  const demonHPPct = Math.round(state.demonHP);
+
+  return `
+    <div>
+      <div class="sd-battle">
+        <div style="text-align:right;">
+          ${romiSVG('battle')}
+          <div class="hp-bar-wrap">
+            <div style="font-size:11px;color:var(--cyan);">רומי</div>
+            <div class="hp-bar-bg"><div class="hp-bar-fill hp-romi" style="width:${romiHPPct}%"></div></div>
+          </div>
+        </div>
+        <div class="sd-vs">VS</div>
+        <div style="text-align:left;">
+          ${demonSVG(demonType)}
+          <div class="hp-bar-wrap">
+            <div style="font-size:11px;color:var(--danger);">שד</div>
+            <div class="hp-bar-bg"><div class="hp-bar-fill hp-demon" style="width:${demonHPPct}%"></div></div>
+          </div>
+        </div>
+      </div>
+      ${hintHtml}
+      <div class="sd-sentence">${sentenceHtml}</div>
+      <div class="sd-options" id="sd-options">
+        ${q.options.map(opt =>
+          `<button class="sd-option" onclick="sdAnswer('${opt}', this)">${opt}</button>`
+        ).join('')}
+      </div>
+    </div>`;
+}
+
+function sdAnswer(answer, btn) {
+  const data = CONTENT[state.grade][state.difficulty].sentenceDuel;
+  const q = data[state.questionIndex];
+  const allBtns = document.querySelectorAll('.sd-option');
+  allBtns.forEach(b => b.classList.add('disabled'));
+
+  if (answer === q.answer) {
+    btn.classList.add('correct');
+    state.score++;
+    state.demonHP = Math.max(0, state.demonHP - 30);
+    showFeedback('⚔️✨');
+    setTimeout(() => {
+      state.questionIndex++;
+      state.hintActive = false;
+      if (state.questionIndex >= data.length) { endGame(); return; }
+      render();
+    }, 1000);
+  } else {
+    btn.classList.add('wrong');
+    // show correct
+    allBtns.forEach(b => { if(b.textContent === q.answer) b.classList.add('correct'); });
+    state.lives = Math.max(0, state.lives - 1);
+    state.romiHP = Math.max(0, state.romiHP - 30);
+    showFeedback('💥');
+    if (state.lives <= 0) { setTimeout(endGame, 1200); return; }
+    setTimeout(() => {
+      state.questionIndex++;
+      state.hintActive = false;
+      if (state.questionIndex >= data.length) { endGame(); return; }
+      render();
+    }, 1500);
+  }
+}
+
+// ═══════════════════════════════════════
+//  WORD HUNT
+// ═══════════════════════════════════════
+function renderWordHunt() {
+  const data = CONTENT[state.grade][state.difficulty].wordHunt;
+  const { grid, foundWords, currentCells } = state.wh;
+  const size = grid.length;
+
+  const gridHtml = grid.map((row, r) =>
+    `<div class="wh-row">${row.map((letter, c) => {
+      const isFound = state.wh.placed.some(p => {
+        if (!foundWords.includes(p.word)) return false;
+        for (let i = 0; i < p.word.length; i++) {
+          const pr = p.horiz ? p.row : p.row + i;
+          const pc = p.horiz ? p.col + i : p.col;
+          if (pr === r && pc === c) return true;
+        }
+        return false;
+      });
+      const isSelected = currentCells.some(([cr,cc]) => cr === r && cc === c);
+      return `<div class="wh-cell ${isFound ? 'found' : isSelected ? 'selected' : ''}"
+        onmousedown="whMouseDown(${r},${c})" onmouseover="whMouseOver(${r},${c})" onmouseup="whMouseUp(${r},${c})"
+        ontouchstart="whMouseDown(${r},${c})" ontouchend="whMouseUp(${r},${c})"
+        >${letter}</div>`;
+    }).join('')}</div>`
+  ).join('');
+
+  const wordsHtml = data.words.map((word, i) =>
+    `<div class="wh-word-chip ${foundWords.includes(word) ? 'found' : ''}">
+      ${word}<span class="wh-translation">${data.translations[i]}</span>
+    </div>`
+  ).join('');
+
+  const allFound = foundWords.length >= data.words.length;
+  if (allFound && !state.wh.finished) {
+    state.wh.finished = true;
+    state.score = data.words.length;
+    setTimeout(endGame, 1500);
+  }
+
+  return `
+    <div>
+      <div class="wh-wrap" onmouseleave="whMouseUp(null,null)">
+        <div>
+          <div class="wh-grid" id="wh-grid">${gridHtml}</div>
+        </div>
+        <div>
+          <div style="color:var(--cyan);font-size:14px;font-weight:700;margin-bottom:10px;text-align:center;">מצא/י את המילים:</div>
+          <div class="wh-words-list">${wordsHtml}</div>
+          <div style="margin-top:15px;text-align:center;color:var(--gold);font-size:13px;">${foundWords.length} / ${data.words.length} מילים</div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function whMouseDown(r, c) {
+  state.wh.mouseDown = true;
+  state.wh.startCell = [r, c];
+  state.wh.currentCells = [[r, c]];
+  refreshGameArea();
+}
+
+function whMouseOver(r, c) {
+  if (!state.wh.mouseDown || !state.wh.startCell) return;
+  const [sr, sc] = state.wh.startCell;
+  const dr = r - sr, dc = c - sc;
+  const cells = [[sr, sc]];
+  if (dr === 0 && dc !== 0) {
+    const step = dc > 0 ? 1 : -1;
+    for (let i = sc + step; step > 0 ? i <= c : i >= c; i += step) cells.push([sr, i]);
+  } else if (dc === 0 && dr !== 0) {
+    const step = dr > 0 ? 1 : -1;
+    for (let i = sr + step; step > 0 ? i <= r : i >= r; i += step) cells.push([i, sc]);
+  }
+  state.wh.currentCells = cells;
+  refreshGameArea();
+}
+
+function whMouseUp(r, c) {
+  if (!state.wh.mouseDown) return;
+  state.wh.mouseDown = false;
+  // check if selected cells form a word
+  const cells = state.wh.currentCells;
+  const selectedWord = cells.map(([r,c]) => state.wh.grid[r][c]).join('');
+  const data = CONTENT[state.grade][state.difficulty].wordHunt;
+  const found = data.words.find(w => w === selectedWord || w === selectedWord.split('').reverse().join(''));
+  if (found && !state.wh.foundWords.includes(found)) {
+    state.wh.foundWords.push(found);
+    state.score++;
+    showFeedback('🌟');
+  }
+  state.wh.currentCells = [];
+  state.wh.startCell = null;
+  refreshGameArea();
+}
+
+// ═══════════════════════════════════════
+//  PICTURE MATCH
+// ═══════════════════════════════════════
+function renderPictureMatch() {
+  const { items, shuffledWords, matchedPairs, selectedImage, selectedWord } = state.pm;
+
+  const imagesHtml = items.map((item, i) => {
+    const isMatched = matchedPairs.some(p => p.idx === i);
+    const isSelected = selectedImage === i;
+    return `<div class="pm-image-card ${isMatched ? 'matched' : isSelected ? 'selected' : ''}" onclick="pmSelectImage(${i})">
+      <span class="pm-emoji">${item.emoji}</span>
+      <div class="pm-label">${item.he}</div>
+      ${isMatched ? '<div style="color:var(--green);font-size:12px;font-weight:700;margin-top:4px;">✓ '+item.word+'</div>' : ''}
+    </div>`;
+  }).join('');
+
+  const wordsHtml = shuffledWords.map((word, i) => {
+    const isUsed = matchedPairs.some(p => p.word === word);
+    const isSelected = selectedWord === word;
+    return `<div class="pm-word-btn ${isUsed ? 'used' : isSelected ? 'selected' : ''}" onclick="pmSelectWord('${word}')" dir="ltr">${word}</div>`;
+  }).join('');
+
+  const allMatched = matchedPairs.length >= items.length;
+  if (allMatched && !state.pm.finished) {
+    state.pm.finished = true;
+    state.score = items.length;
+    setTimeout(() => {
+      // load next batch
+      const data = CONTENT[state.grade][state.difficulty].pictureMatch;
+      const nextStart = (state.questionIndex + 4);
+      if (nextStart >= data.length) { endGame(); return; }
+      state.questionIndex += 4;
+      const nextItems = [...data].sort(() => Math.random()-0.5).slice(0,4);
+      state.pm = {
+        items: nextItems,
+        shuffledWords: [...nextItems].sort(() => Math.random()-0.5).map(i => i.word),
+        matchedPairs: [], selectedImage: null, selectedWord: null,
+        score: state.score, finished: false
+      };
+      refreshGameArea();
+    }, 1200);
+  }
+
+  return `
+    <div>
+      <div class="pm-instructions">קודם בחר/י תמונה, אחר כך בחר/י את המילה המתאימה 👇</div>
+      <div class="pm-grid" id="pm-images">${imagesHtml}</div>
+      <div class="pm-words" id="pm-words">${wordsHtml}</div>
+    </div>`;
+}
+
+function pmSelectImage(idx) {
+  state.pm.selectedImage = idx;
+  if (state.pm.selectedWord) pmTryMatch();
+  else refreshGameArea();
+}
+
+function pmSelectWord(word) {
+  state.pm.selectedWord = word;
+  if (state.pm.selectedImage !== null) pmTryMatch();
+  else refreshGameArea();
+}
+
+function pmTryMatch() {
+  const { selectedImage, selectedWord, items } = state.pm;
+  const item = items[selectedImage];
+  if (item.word === selectedWord) {
+    state.pm.matchedPairs.push({ idx: selectedImage, word: selectedWord });
+    state.score++;
+    showFeedback('✨');
+  } else {
+    showFeedback('❌');
+    state.lives = Math.max(0, state.lives - 1);
+    if (state.lives <= 0) { setTimeout(endGame, 800); return; }
+  }
+  state.pm.selectedImage = null;
+  state.pm.selectedWord = null;
+  refreshGameArea();
+}
+
+// ═══════════════════════════════════════
+//  HINT SYSTEM
+// ═══════════════════════════════════════
+function renderHintBox() {
+  const data = CONTENT[state.grade][state.difficulty];
+  let hintText = '';
+  if (state.gameType === 'letterQuest') {
+    hintText = data.letterQuest[state.questionIndex]?.hint || '';
+  } else if (state.gameType === 'sentenceDuel') {
+    hintText = data.sentenceDuel[state.questionIndex]?.hint || '';
+  } else if (state.gameType === 'wordHunt') {
+    hintText = 'מצא/י מילה בשורה (→) או בעמודה (↓). לחץ/י על האות הראשונה וגרור/י לאות האחרונה!';
+  } else {
+    hintText = 'בחר/י תמונה ואחר כך בחר/י את המילה האנגלית המתאימה לה';
+  }
+  return `
+    <div class="hint-overlay" onclick="closeHint()">
+      <div class="hint-box" onclick="event.stopPropagation()">
+        <h3>💡 רמז</h3>
+        <p>${hintText}</p>
+        <button class="btn-primary" onclick="closeHint()" style="font-size:14px;padding:10px 25px;">הבנתי!</button>
+      </div>
+    </div>`;
+}
+
+function toggleHint() {
+  if (!state.hintActive && state.hintsLeft > 0) {
+    state.hintActive = true;
+    state.hintsLeft--;
+    render();
+  } else if (state.hintActive) {
+    closeHint();
+  }
+}
+
+function closeHint() {
+  state.hintActive = false;
+  render();
+}
+
+// ═══════════════════════════════════════
+//  RESULTS
+// ═══════════════════════════════════════
+function endGame() {
+  state.screen = 'results';
+  render();
+  const stars = setStars(state.score);
+  setTimeout(() => {
+    const starsEls = document.querySelectorAll('.results-star');
+    starsEls.forEach((el, i) => {
+      setTimeout(() => { if (i < stars) el.classList.add('earned'); }, i * 400);
+    });
+  }, 300);
+  if (state.score >= state.totalQ * 0.8) {
+    setTimeout(() => {
+      const popup = document.getElementById('achievement-popup');
+      if (popup) { popup.classList.add('show'); setTimeout(() => popup.classList.remove('show'), 3000); }
+    }, 1500);
+  }
+}
+
+function renderResults() {
+  const pct = Math.round(state.score / state.totalQ * 100);
+  const message = pct >= 90 ? '🌟 מדהים! רומי גאה בך!'
+    : pct >= 70 ? '✨ כל הכבוד! תוצאה מצוינת!'
+    : pct >= 50 ? '👍 יפה! קצת עוד אימון ותגיע לקדושה!'
+    : '💪 נסה/י שוב - אתה יכול/ה!';
+
+  return `
+    <div class="screen results-screen">
+      ${romiSVG(pct >= 70 ? 'happy' : 'normal')}
+      <div class="results-stars">
+        <span class="results-star" id="star-1">⭐</span>
+        <span class="results-star" id="star-2">⭐</span>
+        <span class="results-star" id="star-3">⭐</span>
+      </div>
+      <div class="results-score">${state.score}<span> / ${state.totalQ}</span></div>
+      <div class="results-message">${message}</div>
+      <div class="results-btns">
+        <button class="btn-primary" onclick="restartGame()">🔄 שחק/י שוב</button>
+        <button class="btn-secondary" onclick="navigate('gameHub')">🎮 בחר/י משחק</button>
+        <button class="btn-secondary" onclick="navigate('welcome')">🏠 בית</button>
+      </div>
+      <div id="achievement-popup" class="achievement-popup">🏆 הישג חדש! רמה ${gradeLabel(state.grade)} הושלמה!</div>
+    </div>`;
+}
+
+function restartGame() {
+  startGame(state.gameType);
+}
+
+// ═══════════════════════════════════════
+//  NAVIGATION
+// ═══════════════════════════════════════
+function navigate(screen) {
+  state.hintActive = false;
+  if (screen === 'gameHub') state.screen = 'gameHub';
+  else if (screen === 'levelSelect') { state.grade = null; state.difficulty = null; state.screen = 'levelSelect'; }
+  else state.screen = screen;
+  render();
+}
+
+function selectGrade(grade) {
+  state.grade = grade;
+  render(); // show difficulty selector
+}
+
+function selectDiff(diff) {
+  state.difficulty = diff;
+  state.screen = 'gameHub';
+  render();
+}
+
+// ═══════════════════════════════════════
+//  RENDER ENGINE
+// ═══════════════════════════════════════
+function refreshGameArea() {
+  const area = document.getElementById('game-area');
+  if (!area) { render(); return; }
+  const gameContent = (() => {
+    switch(state.gameType) {
+      case 'letterQuest': return renderLetterQuest();
+      case 'sentenceDuel': return renderSentenceDuel();
+      case 'wordHunt': return renderWordHunt();
+      case 'pictureMatch': return renderPictureMatch();
+      default: return '';
+    }
+  })();
+  area.innerHTML = gameContent;
+  // update header
+  const heartsEl = document.querySelector('.lives');
+  if (heartsEl) heartsEl.innerHTML = [1,2,3].map(i => `<span class="heart ${i > state.lives ? 'lost' : ''}">❤️</span>`).join('');
+  const scoreEl = document.querySelector('.score-display');
+  if (scoreEl) scoreEl.innerHTML = `⭐ ${state.score}`;
+  const counterEl = document.querySelector('.question-counter');
+  if (counterEl) counterEl.innerHTML = `${state.questionIndex + 1} / ${state.totalQ}`;
+  const hintBtn = document.querySelector('.hint-btn');
+  if (hintBtn) hintBtn.textContent = `💡 רמז (${state.hintsLeft})`;
+}
+
+function render() {
+  const app = document.getElementById('app');
+  switch(state.screen) {
+    case 'welcome': app.innerHTML = renderWelcome(); break;
+    case 'levelSelect': app.innerHTML = renderLevelSelect(); break;
+    case 'gameHub': app.innerHTML = renderGameHub(); break;
+    case 'game': app.innerHTML = renderGame(); break;
+    case 'results': app.innerHTML = renderResults(); break;
+    default: app.innerHTML = renderWelcome();
+  }
+}
+
+// ═══════════════════════════════════════
+//  GLOBAL MOUSE/TOUCH
+// ═══════════════════════════════════════
+document.addEventListener('mouseup', () => {
+  if (state.wh && state.wh.mouseDown) whMouseUp(null, null);
+});
+document.addEventListener('touchend', () => {
+  if (state.wh && state.wh.mouseDown) whMouseUp(null, null);
+});
+
+// ═══════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════
+render();
+</script>
+</body>
+</html>
