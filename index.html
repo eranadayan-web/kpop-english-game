@@ -140,7 +140,7 @@
     .game-area { width:100%; max-width:750px; }
 
     /* LETTER QUEST */
-    .lq-word-display { display:flex; justify-content:center; align-items:center; gap:12px; margin:25px 0; flex-wrap:wrap; }
+    .lq-word-display { display:flex; justify-content:center; align-items:center; gap:12px; margin:25px 0; flex-wrap:wrap; direction:ltr; }
     .lq-letter {
       width: 58px; height: 70px; background: linear-gradient(135deg, var(--card), var(--card2));
       border: 3px solid var(--purple); border-radius: 12px; display:flex; align-items:center;
@@ -300,6 +300,59 @@
 <div id="app"></div>
 
 <script>
+// ═══════════════════════════════════════
+//  ROMI VOICE (Web Speech API)
+// ═══════════════════════════════════════
+let _romiVoice = null;
+function _loadRomiVoice() {
+  if (_romiVoice) return;
+  const voices = window.speechSynthesis.getVoices();
+  // prefer female English voice
+  _romiVoice = voices.find(v => v.lang.startsWith('en') && /female|woman|girl|zira|samantha|victoria|karen|moira|fiona|tessa|susan|helen/i.test(v.name))
+    || voices.find(v => v.lang.startsWith('en'))
+    || voices[0];
+}
+window.speechSynthesis.onvoiceschanged = _loadRomiVoice;
+_loadRomiVoice();
+
+function speakRomi(text) {
+  if (!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  _loadRomiVoice();
+  const utt = new SpeechSynthesisUtterance(text);
+  if (_romiVoice) utt.voice = _romiVoice;
+  utt.lang = 'en-US';
+  utt.pitch = 1.3;   // slightly higher – Romi is young and energetic
+  utt.rate  = 0.92;
+  utt.volume = 1;
+  window.speechSynthesis.speak(utt);
+}
+
+const ROMI_CORRECT_PHRASES = [
+  'Amazing!', 'Great job!', 'You got it!', 'Awesome!', 'Fantastic!',
+  'Keep it up!', 'Nice work!', 'Brilliant!',
+];
+const ROMI_WIN_PHRASES = [
+  'Good job! You defeated the demon!',
+  'Incredible! Romi is so proud of you!',
+  'You are a true demon hunter!',
+  'Amazing work! You nailed it!',
+  'Wonderful! The KPop world is safe!',
+];
+function romiCorrectSound() {
+  const phrase = ROMI_CORRECT_PHRASES[Math.floor(Math.random() * ROMI_CORRECT_PHRASES.length)];
+  speakRomi(phrase);
+}
+function romiWinSound(pct) {
+  if (pct >= 0.9) {
+    speakRomi(ROMI_WIN_PHRASES[Math.floor(Math.random() * ROMI_WIN_PHRASES.length)]);
+  } else if (pct >= 0.6) {
+    speakRomi('Good job! Keep practicing to become a master!');
+  } else {
+    speakRomi('Nice try! You can do it, keep going!');
+  }
+}
+
 // ═══════════════════════════════════════
 //  STATE
 // ═══════════════════════════════════════
@@ -1115,6 +1168,7 @@ function lqCheck() {
   if (correct) {
     state.score++;
     showFeedback('✨');
+    romiCorrectSound();
     setTimeout(() => {
       state.questionIndex++;
       state.lq = { filledLetters: {}, usedPoolIndices: [] };
@@ -1186,6 +1240,7 @@ function sdAnswer(answer, btn) {
     state.score++;
     state.demonHP = Math.max(0, state.demonHP - 30);
     showFeedback('⚔️✨');
+    romiCorrectSound();
     setTimeout(() => {
       state.questionIndex++;
       state.hintActive = false;
@@ -1299,6 +1354,7 @@ function whMouseUp(r, c) {
     state.wh.foundWords.push(found);
     state.score++;
     showFeedback('🌟');
+    romiCorrectSound();
   }
   state.wh.currentCells = [];
   state.wh.startCell = null;
@@ -1330,7 +1386,6 @@ function renderPictureMatch() {
   const allMatched = matchedPairs.length >= items.length;
   if (allMatched && !state.pm.finished) {
     state.pm.finished = true;
-    state.score = items.length;
     setTimeout(() => {
       // load next batch
       const data = CONTENT[state.grade][state.difficulty].pictureMatch;
@@ -1375,6 +1430,7 @@ function pmTryMatch() {
     state.pm.matchedPairs.push({ idx: selectedImage, word: selectedWord });
     state.score++;
     showFeedback('✨');
+    romiCorrectSound();
   } else {
     showFeedback('❌');
     state.lives = Math.max(0, state.lives - 1);
@@ -1432,6 +1488,8 @@ function endGame() {
   state.screen = 'results';
   render();
   const stars = setStars(state.score);
+  const pct = state.score / state.totalQ;
+  setTimeout(() => romiWinSound(pct), 600);
   setTimeout(() => {
     const starsEls = document.querySelectorAll('.results-star');
     starsEls.forEach((el, i) => {
