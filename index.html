@@ -1026,6 +1026,8 @@ function startGame(gameType) {
   const data = CONTENT[state.grade][state.difficulty][gameType];
   state.totalQ = Array.isArray(data) ? data.length : (data.words ? data.words.length : 8);
 
+  state.sd = { shuffledOptions: null, questionIdx: -1 };
+
   if (gameType === 'letterQuest') {
     state.lq = { filledLetters: {}, usedPoolIndices: [] };
   } else if (gameType === 'wordHunt') {
@@ -1193,6 +1195,14 @@ function renderSentenceDuel() {
   const q = data[state.questionIndex];
   const demonType = state.questionIndex > 5 ? 'boss' : state.questionIndex > 3 ? 'mini' : 'normal';
 
+  // shuffle options once per question, keep stable across re-renders (hint toggle etc.)
+  if (!state.sd || state.sd.questionIdx !== state.questionIndex) {
+    state.sd = {
+      questionIdx: state.questionIndex,
+      shuffledOptions: [...q.options].sort(() => Math.random() - 0.5),
+    };
+  }
+
   const sentenceHtml = q.sentence.replace('___', `<span class="sd-blank" id="sd-blank">${state.sd_selected || '___'}</span>`);
   const hintHtml = state.hintActive
     ? `<div class="sd-hint-box">💡 <strong>רמז דקדוקי:</strong> ${q.hint}</div>` : '';
@@ -1222,7 +1232,7 @@ function renderSentenceDuel() {
       ${hintHtml}
       <div class="sd-sentence">${sentenceHtml}</div>
       <div class="sd-options" id="sd-options">
-        ${q.options.map(opt =>
+        ${state.sd.shuffledOptions.map(opt =>
           `<button class="sd-option" onclick="sdAnswer('${opt}', this)">${opt}</button>`
         ).join('')}
       </div>
